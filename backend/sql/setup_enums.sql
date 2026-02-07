@@ -1,7 +1,7 @@
--- Enable UUID extension (Required for all ID generation)
-create extension if not exists "uuid-ossp";
+   
+create extension if not exists "uuid-ossp";/*  Enable UUID extension (Required for all ID generation) */
 
--- Define Enums (Strict types for status fields)
+/*  Define Enums (Strict types for status fields) */
 create type verification_status as enum ('unverified', 'pending', 'verified', 'rejected');
 create type item_condition as enum ('new', 'like_new', 'good', 'fair', 'poor');
 create type request_status as enum ('pending', 'approved', 'rejected', 'cancelled');
