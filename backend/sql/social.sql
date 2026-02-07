@@ -40,3 +40,71 @@ alter table public.reviews enable row level security;
 alter table public.conversations enable row level security;
 alter table public.conversation_participants enable row level security;
 alter table public.messages enable row level security;
+
+
+
+
+
+
+
+
+create policy "Reviews are viewable by everyone"
+  on public.reviews for select
+  using ( true );
+
+create policy "Users can write reviews"
+  on public.reviews for insert
+  with check ( auth.uid() = reviewer_id );
+
+
+create policy "Users can view conversations they are in"
+  on public.conversations for select
+  using (
+    exists (
+      select 1 from public.conversation_participants
+      where conversation_id = id
+      and user_id = auth.uid()
+    )
+  );
+
+create policy "Users can create conversations"
+  on public.conversations for insert
+  with check ( true );
+
+
+create policy "Users can view chat participants"
+  on public.conversation_participants for select
+  using (
+    exists (
+      select 1 from public.conversation_participants as cp
+      where cp.conversation_id = conversation_id
+      and cp.user_id = auth.uid()
+    )
+  );
+
+create policy "Users can join conversations"
+  on public.conversation_participants for insert
+  with check ( auth.uid() = user_id );
+
+
+create policy "Users can view messages in their chats"
+  on public.messages for select
+  using (
+    exists (
+      select 1 from public.conversation_participants
+      where conversation_id = messages.conversation_id
+      and user_id = auth.uid()
+    )
+  );
+
+
+create policy "Users can send messages to their chats"
+  on public.messages for insert
+  with check (
+    auth.uid() = sender_id and
+    exists (
+      select 1 from public.conversation_participants
+      where conversation_id = messages.conversation_id
+      and user_id = auth.uid()
+    )
+  );
