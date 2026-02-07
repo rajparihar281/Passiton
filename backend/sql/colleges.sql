@@ -7,3 +7,11 @@ create table public.colleges (
 );
 
 alter table public.colleges enable row level security;
+
+
+
+
+
+create policy "Colleges are viewable by everyone"
+  on public.colleges for select
+  using ( true );
