@@ -65,13 +65,13 @@ export const serviceService = {
     const { search, category, pricing_model, college_id, is_active } = filters;
     const offset = (page - 1) * limit;
 
+    // First, fetch services with safe relationships
     let query = supabase
       .from('services')
       .select(`
         *,
         provider:profiles!provider_id(id, full_name, avatar_url, trust_score),
-        images:service_portfolio_images(*),
-        reviews:service_reviews(rating)
+        images:service_portfolio_images(*)
       `, { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -96,21 +96,55 @@ export const serviceService = {
       query = query.eq('is_active', is_active);
     }
 
-    const { data, error, count } = await query;
+    const { data: services, error, count } = await query;
 
-    if (error) throw error;
+    if (error) {
+      console.error('Services query error:', error);
+      throw error;
+    }
 
-    const servicesWithRatings = data.map(service => {
-      const ratings = service.reviews?.map(r => r.rating) || [];
-      const avgRating = ratings.length > 0 
-        ? ratings.reduce((a, b) => a + b, 0) / ratings.length 
-        : 0;
-      return {
-        ...service,
-        average_rating: avgRating,
-        review_count: ratings.length,
-      };
-    });
+    // Safely fetch reviews separately
+    let servicesWithRatings = services;
+    if (services && services.length > 0) {
+      try {
+        const serviceIds = services.map(s => s.id);
+        const { data: reviews, error: reviewError } = await supabase
+          .from('service_reviews')
+          .select('service_id, rating')
+          .in('service_id', serviceIds);
+
+        if (!reviewError && reviews) {
+          // Merge reviews with services
+          servicesWithRatings = services.map(service => {
+            const serviceReviews = reviews.filter(r => r.service_id === service.id);
+            const ratings = serviceReviews.map(r => r.rating);
+            const avgRating = ratings.length > 0 
+              ? ratings.reduce((a, b) => a + b, 0) / ratings.length 
+              : 0;
+            return {
+              ...service,
+              average_rating: avgRating,
+              review_count: ratings.length,
+            };
+          });
+        } else {
+          console.warn('Reviews fetch failed, returning services without ratings:', reviewError?.message);
+          // Return services with default rating values
+          servicesWithRatings = services.map(service => ({
+            ...service,
+            average_rating: 0,
+            review_count: 0,
+          }));
+        }
+      } catch (reviewFetchError) {
+        console.warn('Review fetch error, continuing without reviews:', reviewFetchError.message);
+        servicesWithRatings = services.map(service => ({
+          ...service,
+          average_rating: 0,
+          review_count: 0,
+        }));
+      }
+    }
 
     return {
       data: servicesWithRatings,
@@ -121,29 +155,62 @@ export const serviceService = {
   },
 
   async getServiceById(serviceId) {
-    const { data, error } = await supabase
+    // First, fetch service with safe relationships
+    const { data: service, error } = await supabase
       .from('services')
       .select(`
         *,
         provider:profiles!provider_id(id, full_name, avatar_url, phone, trust_score, bio),
-        images:service_portfolio_images(*),
-        reviews:service_reviews(*, reviewer:profiles!reviewer_id(full_name, avatar_url))
+        images:service_portfolio_images(*)
       `)
       .eq('id', serviceId)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Service fetch error:', error);
+      throw error;
+    }
 
-    const ratings = data.reviews?.map(r => r.rating) || [];
-    const avgRating = ratings.length > 0 
-      ? ratings.reduce((a, b) => a + b, 0) / ratings.length 
-      : 0;
+    // Safely fetch reviews separately
+    try {
+      const { data: reviews, error: reviewError } = await supabase
+        .from('service_reviews')
+        .select(`
+          *,
+          reviewer:profiles!reviewer_id(full_name, avatar_url)
+        `)
+        .eq('service_id', serviceId);
 
-    return {
-      ...data,
-      average_rating: avgRating,
-      review_count: ratings.length,
-    };
+      if (!reviewError && reviews) {
+        const ratings = reviews.map(r => r.rating);
+        const avgRating = ratings.length > 0 
+          ? ratings.reduce((a, b) => a + b, 0) / ratings.length 
+          : 0;
+
+        return {
+          ...service,
+          reviews,
+          average_rating: avgRating,
+          review_count: ratings.length,
+        };
+      } else {
+        console.warn('Reviews fetch failed for service:', serviceId, reviewError?.message);
+        return {
+          ...service,
+          reviews: [],
+          average_rating: 0,
+          review_count: 0,
+        };
+      }
+    } catch (reviewFetchError) {
+      console.warn('Review fetch error for service:', serviceId, reviewFetchError.message);
+      return {
+        ...service,
+        reviews: [],
+        average_rating: 0,
+        review_count: 0,
+      };
+    }
   },
 
   async getMyServices(providerId) {

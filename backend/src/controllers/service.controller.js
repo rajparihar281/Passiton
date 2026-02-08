@@ -54,11 +54,9 @@ export const createService = async (req, res, next) => {
       await serviceService.addServiceImages(service.id, imageUrls);
     }
 
-    const fullService = await serviceService.getServiceById(service.id);
-
     res.status(201).json({
       success: true,
-      data: fullService,
+      data: service,
       message: 'Service created successfully',
     });
   } catch (error) {
