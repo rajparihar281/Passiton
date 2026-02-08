@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Card, Badge, Spinner, EmptyState } from '../components';
 import { Calendar, Clock, User, X } from 'lucide-react';
-import { bookingService } from '../services';
+import { unifiedBookingService } from '../services';
 import toast from 'react-hot-toast';
-import { CancelBookingModal } from '../components/CancelBookingModal';
+import { UnifiedCancelBookingModal } from '../components';
 
 interface Booking {
   id: string;
@@ -68,7 +68,15 @@ export const MyBookingsPage = () => {
   };
 
   const handleCancelBooking = (booking: Booking) => {
-    setCancelModal({ open: true, booking });
+    const unifiedBooking = {
+      id: booking.id,
+      type: 'service' as const,
+      title: booking.service.title,
+      providerName: booking.provider.full_name,
+      scheduledDate: booking.scheduled_at,
+      price: booking.agreed_price
+    };
+    setCancelModal({ open: true, booking: unifiedBooking });
   };
 
   const handleCancelSuccess = () => {
@@ -241,7 +249,7 @@ export const MyBookingsPage = () => {
 
       {/* Cancel Modal */}
       {cancelModal.open && cancelModal.booking && (
-        <CancelBookingModal
+        <UnifiedCancelBookingModal
           booking={cancelModal.booking}
           onClose={() => setCancelModal({ open: false, booking: null })}
           onSuccess={handleCancelSuccess}
