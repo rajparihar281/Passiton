@@ -1,0 +1,46 @@
+import { Link, useLocation } from 'react-router-dom';
+import { Home, Package, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+
+export const Sidebar = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
+
+  return (
+    <aside className={`${collapsed ? 'w-22' : 'w-64'} bg-white shadow-lg h-screen sticky top-0 transition-all duration-300 flex flex-col`}>
+      <div className="p-4 flex items-center justify-between border-b">
+        {!collapsed ? (
+          <Link to="/dashboard" className="flex items-center space-x-2">
+            <Package className="w-8 h-8 text-blue-600" />
+            <span className="text-xl font-bold text-gray-900">PassItOn</span>
+          </Link>
+        ) : (
+          <Link to="/dashboard" className="mx-auto">
+            <Package className="w-8 h-8 text-blue-600" />
+          </Link>
+        )}
+      </div>
+
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="absolute -right-3 top-20 bg-white border rounded-full p-1 shadow-md hover:bg-gray-100 z-10"
+      >
+        {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+      </button>
+
+      <nav className="flex-1 p-4 space-y-2">
+        <Link
+          to="/dashboard"
+          className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-3'} px-4 py-3 rounded-lg transition-colors ${
+            isActive('/dashboard') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          <Home className="w-5 h-5" />
+          {!collapsed && <span>Dashboard</span>}
+        </Link>
+      </nav>
+    </aside>
+  );
+};

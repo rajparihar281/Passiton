@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Navbar } from './Navbar';
+import { Sidebar } from './Sidebar';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -7,9 +7,9 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar />
+      <main className="flex-1 p-8 overflow-auto">
         {children}
       </main>
     </div>
