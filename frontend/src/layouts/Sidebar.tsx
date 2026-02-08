@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Package, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Home, Package, ChevronLeft, ChevronRight, LogIn, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 
 export const Sidebar = () => {
@@ -41,6 +41,27 @@ export const Sidebar = () => {
           {!collapsed && <span>Dashboard</span>}
         </Link>
       </nav>
+
+      <div className="p-4 border-t space-y-2">
+        <Link
+          to="/login"
+          className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-3'} px-4 py-3 rounded-lg transition-colors ${
+            isActive('/login') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          <LogIn className="w-5 h-5" />
+          {!collapsed && <span>Login</span>}
+        </Link>
+        <Link
+          to="/signup"
+          className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-3'} px-4 py-3 rounded-lg transition-colors ${
+            isActive('/signup') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          <UserPlus className="w-5 h-5" />
+          {!collapsed && <span>Sign Up</span>}
+        </Link>
+      </div>
     </aside>
   );
 };
