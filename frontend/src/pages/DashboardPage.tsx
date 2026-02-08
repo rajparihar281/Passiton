@@ -86,7 +86,11 @@ export const DashboardPage = () => {
 
         <div
           ref={containerRef}
-          className="flex-1 bg-white rounded-lg shadow-lg p-6 overflow-hidden cursor-grab active:cursor-grabbing transition-shadow duration-300 hover:shadow-xl"
+          className={`flex-1 rounded-lg shadow-lg p-6 overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-500 relative ${
+            activeSection === 'service' 
+              ? 'bg-gradient-to-br from-[#9333ea]/5 via-white to-[#9333ea]/10' 
+              : 'bg-gradient-to-br from-[#e05226]/5 via-white to-[#e05226]/10'
+          }`}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -96,7 +100,7 @@ export const DashboardPage = () => {
           onMouseLeave={() => setIsDragging(false)}
         >
           <div className={`transition-all duration-500 ease-in-out ${
-            activeSection === 'service' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute'
+            activeSection === 'service' ? 'opacity-100 translate-x-0 relative' : 'opacity-0 -translate-x-full absolute pointer-events-none'
           }`}>
             <h2 className="text-2xl font-bold mb-6 animate-slideDown text-[#9333ea]">Skill Economy</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -139,7 +143,7 @@ export const DashboardPage = () => {
             </div>
           </div>
           <div className={`transition-all duration-500 ease-in-out ${
-            activeSection === 'resources' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'
+            activeSection === 'resources' ? 'opacity-100 translate-x-0 relative' : 'opacity-0 translate-x-full absolute pointer-events-none'
           }`}>
             <h2 className="text-2xl font-bold mb-6 animate-slideDown text-[#e05226]">Item Economy</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

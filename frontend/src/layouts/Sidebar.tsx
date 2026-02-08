@@ -69,9 +69,15 @@ export const Sidebar = () => {
 
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 bg-white border rounded-full p-1 shadow-md hover:bg-gray-100 z-10"
+        className="group absolute -right-0 top-1/2 -translate-y-1/2 bg-white border border-l-0 rounded-r-md px-1 py-6 shadow-md hover:bg-gray-100 z-10 transition-all duration-300"
+        title={collapsed ? 'Expand' : 'Collapse'}
       >
-        {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        <div className="flex flex-col items-center gap-1">
+          {collapsed ? <ChevronRight className="w-6 h-4" /> : <ChevronLeft className="w-6 h-4" />}
+        </div>
+        <span className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+          {collapsed ? 'Expand' : 'Collapse'}
+        </span>
       </button>
 
       <nav className="flex-1 p-4 space-y-2">
