@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Button, Input } from '../components';
 import { validateEmail, validatePassword } from '../utils/helpers';
-import { collegeService } from '../services';
+
 import type { College } from '../types';
 
 export const SignupPage = () => {

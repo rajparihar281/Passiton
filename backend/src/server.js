@@ -15,8 +15,6 @@ import borrowRoutes from "./routes/borrow.routes.js";
 import transactionRoutes from "./routes/transaction.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
 import collegeRoutes from "./routes/college.routes.js";
-import chatRoutes from "./routes/chat.routes.js";
-import reviewRoutes from "./routes/review.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import testRoutes from "./routes/test.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
@@ -64,8 +62,6 @@ app.get("/", (req, res) => {
       transactions: "/api/transactions",
       profiles: "/api/profiles",
       colleges: "/api/colleges",
-      conversations: "/api/conversations",
-      reviews: "/api/reviews",
       notifications: "/api/notifications",
       services: "/api/services",
       bookings: "/api/bookings",
@@ -79,8 +75,8 @@ app.use("/api/borrow-requests", borrowRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/profiles", profileRoutes);
 app.use("/api/colleges", collegeRoutes);
-app.use("/api/conversations", chatRoutes);
-app.use("/api/reviews", reviewRoutes);
+
+
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/services", serviceRoutes);

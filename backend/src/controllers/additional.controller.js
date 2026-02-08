@@ -1,6 +1,5 @@
 import { transactionService } from '../services/transaction.service.js';
 import { profileService, collegeService } from '../services/profile.service.js';
-import { chatService, reviewService } from '../services/chat.service.js';
 
 // Transaction Controllers
 export const getMyTransactions = async (req, res, next) => {
@@ -145,85 +144,4 @@ export const verifyCollegeEmail = async (req, res, next) => {
   }
 };
 
-// Chat Controllers
-export const getConversations = async (req, res, next) => {
-  try {
-    const conversations = await chatService.getConversations(req.user.id);
-    res.json({ success: true, data: conversations });
-  } catch (error) {
-    next(error);
-  }
-};
 
-export const getConversationById = async (req, res, next) => {
-  try {
-    const conversation = await chatService.getConversationById(req.params.id, req.user.id);
-    res.json({ success: true, data: conversation });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const createConversation = async (req, res, next) => {
-  try {
-    const { participantId, itemId } = req.body;
-    const conversation = await chatService.createConversation(req.user.id, participantId, itemId);
-    res.status(201).json({ success: true, data: conversation });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getMessages = async (req, res, next) => {
-  try {
-    const messages = await chatService.getMessages(req.params.id, req.user.id);
-    res.json({ success: true, data: messages });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const sendMessage = async (req, res, next) => {
-  try {
-    const { content } = req.body;
-    const message = await chatService.sendMessage(req.params.id, req.user.id, content);
-    res.status(201).json({ success: true, data: message });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Review Controllers
-export const createReview = async (req, res, next) => {
-  try {
-    const { transaction_id, reviewee_id, rating, comment } = req.body;
-    const review = await reviewService.createReview({
-      transaction_id,
-      reviewer_id: req.user.id,
-      reviewee_id,
-      rating,
-      comment,
-    });
-    res.status(201).json({ success: true, data: review, message: 'Review submitted' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getReviewsByUser = async (req, res, next) => {
-  try {
-    const reviews = await reviewService.getReviewsByUser(req.params.userId);
-    res.json({ success: true, data: reviews });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getReviewsByTransaction = async (req, res, next) => {
-  try {
-    const reviews = await reviewService.getReviewsByTransaction(req.params.transactionId);
-    res.json({ success: true, data: reviews });
-  } catch (error) {
-    next(error);
-  }
-};

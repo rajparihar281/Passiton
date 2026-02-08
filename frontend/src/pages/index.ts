@@ -13,7 +13,7 @@ export { ProfilePage } from './ProfilePage';
 export { SettingsPage } from './SettingsPage';
 export { MyItemsPage } from './MyItemsPage';
 export { TransactionsPage } from './TransactionsPage';
-export { ChatPage } from './ChatPage';
+
 export { NotificationsPage } from './NotificationsPage';
 export { WalletPage } from './WalletPage';
 export {

@@ -12,7 +12,6 @@ import {
   MyRequestsPage,
   ReceivedRequestsPage,
   TransactionsPage,
-  ChatPage,
   ProfilePage,
   SettingsPage,
   NotificationsPage,
@@ -111,22 +110,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/chat"
-            element={
-              <ProtectedRoute>
-                <ChatPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/chat/:id"
-            element={
-              <ProtectedRoute>
-                <ChatPage />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/profile"
             element={
